@@ -1,23 +1,25 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect } from "react";
+import "../globals.css";
 
 async function getPosts() {
-    console.log("fetchPosts");
+  console.log("fetchPosts");
 
-    try {
-      const res = await fetch('http://localhost:3001/posts');
-      if (!res.ok) {
-        throw new Error(`Failed to fetch posts: ${res.statusText}`);
-      }
-      return await res.json();
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      return [];
+  try {
+    const res = await fetch("http://localhost:3001/posts");
+    if (!res.ok) {
+      throw new Error(`Failed to fetch posts: ${res.statusText}`);
     }
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return [];
   }
+}
 
 interface Post {
-  id: number;
+  _id: string;
   text: string;
   imageUrl?: string; // Optional image URL
   videoUrl?: string; // Optional video URL
@@ -25,7 +27,7 @@ interface Post {
   liked: boolean;
 }
 
-const Dashboard: React.FC = () => {
+const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -36,13 +38,11 @@ const Dashboard: React.FC = () => {
     fetchPosts();
   }, []);
 
-  const handleLikeClick = (postId: number) => {
-    // Implement like logic (e.g., update post data on server)
+  const handleLikeClick = (postId: string) => {
     console.log(`Liked post with ID: ${postId}`);
-    // Update the local state with a new object (for visual feedback)
     setPosts(
       posts.map((post) =>
-        post.id === postId ? { ...post, liked: !post.liked } : post
+        post._id === postId ? { ...post, liked: !post.liked } : post
       )
     );
   };
@@ -50,9 +50,9 @@ const Dashboard: React.FC = () => {
   return (
     <div className="posts-container">
       {posts.map((post) => (
-        <div key={post.id} className="post-card">
+        <div key={post._id} className="post-card">
           {post.imageUrl && (
-            <img src={post.imageUrl} alt={post.text || 'Post Image'} />
+            <img src={post.imageUrl} alt={post.text || "Post Image"} />
           )}
           {post.videoUrl && (
             <video src={post.videoUrl} controls width="100%" /> // Add controls
@@ -62,10 +62,10 @@ const Dashboard: React.FC = () => {
             <div className="post-info">
               <span>{post.views} views</span>
               <button
-                className={`like-button ${post.liked ? 'liked' : ''}`}
-                onClick={() => handleLikeClick(post.id)}
+                className={`like-button ${post.liked ? "liked" : ""}`}
+                onClick={() => handleLikeClick(post._id)}
               >
-                Like
+                {post.liked ? "❤️ Liked" : "🤍 Like"}
               </button>
             </div>
           </div>
@@ -75,6 +75,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
-
-
+export default Posts;
