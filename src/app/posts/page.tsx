@@ -3,6 +3,12 @@
 import React, { useState, useEffect } from "react";
 import "../globals.css";
 
+import { socket } from "../../socket";
+
+import type { ChangeEvent, SetStateAction } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 async function getPosts() {
   console.log("fetchPosts");
 
@@ -29,7 +35,30 @@ interface Post {
 
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [input, setInput] = useState("");
+  useEffect(() => {
+    socketInitializer();
+  }, []);
 
+  const socketInitializer = async () => {
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+
+    socket.on("post_liked", (msg: SetStateAction<string>) => {
+      console.log(msg);
+      toast.success("Your post is liked!");
+      setInput(msg);
+    });
+  };
+
+  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+
+    if (socket !== undefined) {
+      socket.emit("input-change", e.target.value);
+    }
+  };
   useEffect(() => {
     const fetchPosts = async () => {
       const fetchedPosts = await getPosts();
@@ -39,12 +68,22 @@ const Posts: React.FC = () => {
   }, []);
 
   const handleLikeClick = (postId: string) => {
-    console.log(`Liked post with ID: ${postId}`);
-    setPosts(
-      posts.map((post) =>
-        post._id === postId ? { ...post, liked: !post.liked } : post
-      )
+    const postToUpdate = posts.find((post) => post._id === postId);
+    if (!postToUpdate) {
+      console.error(`Post with ID ${postId} not found`);
+      return;
+    }
+
+    const updatedPosts = posts.map((post) =>
+      post._id === postId ? { ...post, liked: !post.liked } : post
     );
+
+    if (!postToUpdate.liked) {
+      socket.emit("like_post", { postId });
+    }
+
+    console.log(`Liked post with ID: ${postId}`);
+    setPosts(updatedPosts);
   };
 
   return (
@@ -71,6 +110,7 @@ const Posts: React.FC = () => {
           </div>
         </div>
       ))}
+      <ToastContainer />
     </div>
   );
 };

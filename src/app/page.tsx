@@ -1,8 +1,11 @@
+"use client";
 import Layout from "./layout";
 import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
+
 const Home = () => {
+ 
   const { userId } = auth();
   if (userId) {
     redirect("/posts");
