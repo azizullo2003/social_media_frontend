@@ -36,18 +36,27 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin: 0 -5px; /* Adjust margin to create space between items */
+  margin: 0 0px;
 }
 
 .post-card {
-  width: calc(50% - 10px); /* Adjust width to occupy half of the container */
-  margin: 5px 0; /* Adjust margin to create space between items */
+  width: calc(50% - 10px);
+
+  margin: 5px 0;
+
+  position: relative;
+
+  text-align: center;
+}
+
+.post-card .like-view {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
 }
 
 @media screen and (min-width: 768px) {
   .post-card {
-    width: calc(
-      33.33% - 10px
-    ); /* Adjust width to occupy one-third of the container */
+    width: calc(33.33% - 10px);
   }
 }

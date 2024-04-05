@@ -27,8 +27,8 @@ async function getPosts() {
 interface Post {
   _id: string;
   text: string;
-  imageUrl?: string; // Optional image URL
-  videoUrl?: string; // Optional video URL
+  imageUrl?: string;
+  videoUrl?: string;
   views: number;
   liked: boolean;
 }
@@ -79,7 +79,7 @@ const Posts: React.FC = () => {
     );
 
     if (!postToUpdate.liked) {
-      socket.emit("like_post", { postId });
+      socket.emit("like_post", { itemId: postId });
     }
 
     console.log(`Liked post with ID: ${postId}`);

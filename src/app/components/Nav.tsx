@@ -18,6 +18,9 @@ export default function Nav() {
         </div>
         {isLoaded && user && (
           <>
+            <div className="">
+              <a href="/add_post">+</a>
+            </div>
             <UserButton afterSignOutUrl="/"></UserButton>
           </>
         )}
